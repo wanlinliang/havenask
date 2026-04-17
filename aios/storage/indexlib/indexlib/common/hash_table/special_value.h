@@ -150,7 +150,7 @@ public:
     void SetValue(const TimestampValue<_RealVT>& value)
     {
         if (!IsEmpty() && !IsDeleted()) {
-            SetDelete(value); // defend for value cross border of 8Bytes
+            SetDelete(value); // defend for value cross border of 8Bytes // important
         }
         mValue = value.Value();
         volatile uint32_t tempTimestamp = value.Timestamp();
@@ -159,7 +159,7 @@ public:
     void SetDelete(const TimestampValue<_RealVT>& value)
     {
         volatile uint32_t tempTimestamp = value.Timestamp() | DeleteMask;
-        mTimestamp = tempTimestamp;
+        mTimestamp = tempTimestamp; // delete mask invalid timestamp imply the delete
     }
     void SetEmpty()
     {

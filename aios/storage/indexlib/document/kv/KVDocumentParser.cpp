@@ -46,13 +46,13 @@ Status KVDocumentParser::Init(const std::shared_ptr<config::ITabletSchema>& sche
 
     for (const auto& indexConfig : schema->GetIndexConfigs()) {
         auto indexDocParser = CreateIndexFieldsParser(indexConfig);
-        auto s = indexDocParser->Init(indexConfig);
+        auto s = indexDocParser->Init(indexConfig); // 这里读每一个indexConfig
         if (!s.IsOK()) {
             AUTIL_LOG(ERROR, "init index document parser for [%s:%s] failed, error: %s",
                       indexConfig->GetIndexName().c_str(), indexConfig->GetIndexType().c_str(), s.ToString().c_str());
             return s;
         }
-        auto hash = config::IndexConfigHash::Hash(indexConfig);
+        auto hash = config::IndexConfigHash::Hash(indexConfig); // 这里说明使用什么样的哈希函数
         _indexDocParsers.emplace_back(hash, std::move(indexDocParser));
     }
 

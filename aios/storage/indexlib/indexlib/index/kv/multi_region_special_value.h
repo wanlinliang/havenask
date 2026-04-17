@@ -142,7 +142,7 @@ public:
     void SetValue(const MultiRegionTimestampValue<_RealVT>& value)
     {
         if (!IsEmpty() && !IsDeleted()) {
-            SetDelete(value); // defend for value cross border of 8Bytes
+            SetDelete(value); // defend for value cross border of 8Bytes // important
         }
         mValue = value.Value();
         volatile uint32_t tempTimestamp = value.Timestamp();

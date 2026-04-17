@@ -72,7 +72,7 @@ KVDocumentBatchMaker::MakeBatchVec(const std::shared_ptr<config::ITabletSchema>&
         }
         auto extendDoc = factory->CreateExtendDocument();
         extendDoc->SetRawDocument(rawDoc);
-        auto [s, docBatch] = parser->Parse(*extendDoc);
+        auto [s, docBatch] = parser->Parse(*extendDoc); // 这里是docbatch的原因是，可能有多个KV index，每个KV index 的value 列也可能不同
         if (!s.IsOK()) {
             AUTIL_LOG(ERROR, "parse failed, error: %s, raw doc: %s", s.ToString().c_str(), rawDoc->toString().c_str());
             return {};
