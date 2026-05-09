@@ -17,10 +17,7 @@ cc_library(
     hdrs=['misc/common.h'],
     copts=['-Werror'],
     include_prefix='indexlib',
-    visibility=[
-        '//aios/storage/indexlib/indexlib:indexlibV1',
-        '@com_taobao_turing_plugins//turing_plugins:__subpackages__'
-    ],
+    visibility=['//aios/storage/indexlib/indexlib:indexlibV1'],
     deps=[':index_define', ':indexlib_header', '//aios/autil:multi_value']
 )
 cc_library(
@@ -168,10 +165,7 @@ cc_library(
     name='indexlib_testlib',
     copts=['-Werror'],
     include_prefix='indexlib',
-    visibility=[
-        '//aios/storage/indexlib/indexlib:indexlibV1',
-        '@com_taobao_turing_plugins//turing_plugins:__subpackages__'
-    ],
+    visibility=['//aios/storage/indexlib/indexlib:indexlibV1'],
     deps=[
         ':indexlib_merger', '//aios/storage/indexlib/indexlib/config',
         '//aios/storage/indexlib/indexlib/document',

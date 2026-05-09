@@ -363,10 +363,7 @@ cc_library(
     hdrs=glob(['kkv/*.h']),
     copts=['-Werror'],
     include_prefix='indexlib/index',
-    visibility=[
-        '//aios/storage/indexlib/indexlib:indexlibV1',
-        '@com_taobao_turing_plugins//turing_plugins:__subpackages__'
-    ],
+    visibility=['//aios/storage/indexlib/indexlib:indexlibV1'],
     deps=([
         ':kv', '//aios/kmonitor:kmonitor_cpp_adapter',
         '//aios/storage/indexlib/file_system',
