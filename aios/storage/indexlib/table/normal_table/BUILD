@@ -1,5 +1,11 @@
 load('//aios/storage:defs.bzl', 'strict_cc_library')
 package(default_visibility=['//aios/storage/indexlib:__subpackages__'])
+
+config_setting(
+    name='enable_ann_aitheta2',
+    values={'define': 'enable_ann_aitheta2=true'}
+)
+
 strict_cc_library(
     name='table',
     srcs=[],
@@ -323,9 +329,12 @@ strict_cc_library(
 )
 strict_cc_library(
     name='NormalTabletParallelBuilder',
+    copts=select({
+        ':enable_ann_aitheta2': ['-DINDEXLIB_ENABLE_ANN_AITHETA2=1'],
+        '//conditions:default': [],
+    }),
     deps=[
         ':NormalMemSegment', '//aios/storage/indexlib/framework:OpenOptions',
-        '//aios/storage/indexlib/index/ann/aitheta2:AithetaBuildWorkItem',
         '//aios/storage/indexlib/index/attribute:AttributeBuildWorkItem',
         '//aios/storage/indexlib/index/common:BuildWorkItem',
         '//aios/storage/indexlib/index/deletionmap:DeletionMapBuildWorkItem',
@@ -338,7 +347,12 @@ strict_cc_library(
         '//aios/storage/indexlib/index/summary:SummaryBuildWorkItem',
         '//aios/storage/indexlib/table/normal_table/virtual_attribute:VirtualAttributeBuildWorkItem',
         '//aios/storage/indexlib/util:GroupedThreadPool'
-    ]
+    ] + select({
+        ':enable_ann_aitheta2': [
+            '//aios/storage/indexlib/index/ann/aitheta2:AithetaBuildWorkItem'
+        ],
+        '//conditions:default': [],
+    })
 )
 strict_cc_library(
     name='NormalTabletDeployerHook',

@@ -17,10 +17,12 @@
 
 #include "indexlib/index/ann/ANNIndexConfig.h"
 #include "indexlib/index/ann/Common.h"
+#ifdef INDEXLIB_ENABLE_ANN_AITHETA2
 #include "indexlib/index/ann/aitheta2/AithetaDiskIndexer.h"
 #include "indexlib/index/ann/aitheta2/AithetaIndexMerger.h"
 #include "indexlib/index/ann/aitheta2/AithetaIndexReader.h"
 #include "indexlib/index/ann/aitheta2/AithetaMemIndexer.h"
+#endif
 
 namespace indexlibv2::index {
 
@@ -30,31 +32,51 @@ std::shared_ptr<IDiskIndexer>
 ANNIndexFactory::CreateDiskIndexer(const std::shared_ptr<config::IIndexConfig>& indexConfig,
                                    const DiskIndexerParameter& indexerParam) const
 {
+#ifdef INDEXLIB_ENABLE_ANN_AITHETA2
     return std::make_shared<ann::AithetaDiskIndexer>(indexerParam);
+#else
+    AUTIL_SLOG(ERROR) << "ann aitheta2 is disabled at build time";
+    return nullptr;
+#endif
 }
 
 std::shared_ptr<IMemIndexer> ANNIndexFactory::CreateMemIndexer(const std::shared_ptr<config::IIndexConfig>& indexConfig,
                                                                const MemIndexerParameter& indexerParam) const
 {
+#ifdef INDEXLIB_ENABLE_ANN_AITHETA2
     auto annIndexConfig = std::dynamic_pointer_cast<config::ANNIndexConfig>(indexConfig);
     if (!annIndexConfig) {
         AUTIL_SLOG(ERROR) << "expect ANNIndexConfig, actual: " << indexConfig->GetIndexType();
         return nullptr;
     }
     return std::make_shared<ann::AithetaMemIndexer>(indexerParam);
+#else
+    AUTIL_SLOG(ERROR) << "ann aitheta2 is disabled at build time";
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<IIndexReader>
 ANNIndexFactory::CreateIndexReader(const std::shared_ptr<config::IIndexConfig>& indexConfig,
                                    const IndexReaderParameter& indexReaderParam) const
 {
+#ifdef INDEXLIB_ENABLE_ANN_AITHETA2
     return std::make_unique<ann::AithetaIndexReader>(indexReaderParam);
+#else
+    AUTIL_SLOG(ERROR) << "ann aitheta2 is disabled at build time";
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<IIndexMerger>
 ANNIndexFactory::CreateIndexMerger(const std::shared_ptr<config::IIndexConfig>& indexConfig) const
 {
+#ifdef INDEXLIB_ENABLE_ANN_AITHETA2
     return std::make_unique<ann::AithetaIndexMerger>();
+#else
+    AUTIL_SLOG(ERROR) << "ann aitheta2 is disabled at build time";
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<config::IIndexConfig> ANNIndexFactory::CreateIndexConfig(const autil::legacy::Any& any) const

@@ -131,7 +131,9 @@ private:
     std::vector<std::unique_ptr<indexlib::index::SingleInvertedIndexBuilder>> _singleInvertedIndexBuilders;
     std::vector<std::unique_ptr<indexlib::index::SingleSummaryBuilder>> _singleSummaryBuilders;
     std::vector<std::unique_ptr<indexlib::index::SingleSourceBuilder>> _singleSourceBuilders;
+#ifdef INDEXLIB_ENABLE_ANN_AITHETA2
     std::vector<std::unique_ptr<indexlib::index::ann::SingleAithetaBuilder>> _singleAnnBuilders;
+#endif
     std::vector<std::unique_ptr<indexlib::index::SingleFieldMetaBuilder>> _singleFieldMetaBuilders;
     std::vector<std::unique_ptr<indexlib::index::SingleOperationLogBuilder>> _singleOpLogBuilders;
     std::vector<std::unique_ptr<indexlib::index::ISinglePrimaryKeyBuilder>> _singlePrimaryKeyBuilders;

@@ -19,8 +19,10 @@
 #include "indexlib/config/TabletOptions.h"
 #include "indexlib/config/TabletSchema.h"
 #include "indexlib/document/IDocumentBatch.h"
+#ifdef INDEXLIB_ENABLE_ANN_AITHETA2
 #include "indexlib/index/ann/aitheta2/AithetaBuildWorkItem.h"
 #include "indexlib/index/ann/aitheta2/SingleAithetaBuilder.h"
+#endif
 #include "indexlib/index/attribute/AttributeBuildWorkItem.h"
 #include "indexlib/index/attribute/SingleAttributeBuilder.h"
 #include "indexlib/index/deletionmap/DeletionMapBuildWorkItem.h"
@@ -139,8 +141,14 @@ NormalTabletParallelBuilder::PrepareForWrite(const std::shared_ptr<indexlibv2::c
     RETURN_IF_STATUS_ERROR(InitSingleVirtualAttributeBuilders(schema, tabletData), "init attribute builders failed");
     RETURN_IF_STATUS_ERROR(InitSinglePrimaryKeyBuilders(schema, tabletData), "init primary key builders failed");
     RETURN_STATUS_DIRECTLY_IF_ERROR(InitSingleDeletionMapBuilders(schema, tabletData, &_singleDeletionMapBuilders));
+#ifdef INDEXLIB_ENABLE_ANN_AITHETA2
     RETURN_STATUS_DIRECTLY_IF_ERROR(InitSingleBuilders<index::ann::SingleAithetaBuilder>(
         schema, tabletData, indexlibv2::index::ANN_INDEX_TYPE_STR, &_singleAnnBuilders));
+#else
+    if (!schema->GetIndexConfigs(indexlibv2::index::ANN_INDEX_TYPE_STR).empty()) {
+        return Status::Unimplement("ann index requires build with --define enable_ann_aitheta2=true");
+    }
+#endif
     RETURN_STATUS_DIRECTLY_IF_ERROR(InitSingleBuilders<index::SingleSummaryBuilder>(
         schema, tabletData, indexlibv2::index::SUMMARY_INDEX_TYPE_STR, &_singleSummaryBuilders));
     RETURN_STATUS_DIRECTLY_IF_ERROR(InitSingleBuilders<index::SingleSourceBuilder>(
@@ -396,8 +404,10 @@ Status NormalTabletParallelBuilder::Build(const std::shared_ptr<indexlibv2::docu
                                                                                              batch);
     CreateBuildWorkItems<indexlib::index::SingleSourceBuilder, indexlib::index::SourceBuildWorkItem>(
         _singleSourceBuilders, batch);
+#ifdef INDEXLIB_ENABLE_ANN_AITHETA2
     CreateBuildWorkItems<indexlib::index::ann::SingleAithetaBuilder, index::ann::AithetaBuildWorkItem>(
         _singleAnnBuilders, batch);
+#endif
     CreateBuildWorkItems<indexlib::index::SingleOperationLogBuilder, index::OperationLogBuildWorkItem>(
         _singleOpLogBuilders, batch);
     CreateBuildWorkItems<indexlib::index::SingleFieldMetaBuilder, index::FieldMetaBuildWorkItem>(
